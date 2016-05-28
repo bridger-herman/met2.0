@@ -3,10 +3,12 @@ import javax.sound.sampled.*;
 import java.io.File;
 
 public class AudioManager {
-  public static final String location = "../sounds/";
-  public static final String downbeat = location + "a6.wav";
-  public static final String beat = location + "d6.wav";
-  public static final String subdiv = location + "a5.wav";
+  private static final String location = "../sounds/";
+  private static final String downbeat = location + "a6.wav";
+  private static final String beat = location + "d6.wav";
+  private static final String subdiv = location + "a5.wav";
+  // Conversion between microseconds and milliseconds
+  private static final int conversion = 1000;
 
   private AudioInputStream beatInputStream;
   private AudioInputStream downbeatInputStream;
@@ -47,13 +49,40 @@ public class AudioManager {
     }
   }
 
+  public void playMeasure(Measure measure, boolean loop) {
+    if (loop) {
+      while (true)
+        this.playMeasure(measure);
+    }
+    else
+      this.playMeasure(measure);
+  }
+
+  // TODO add support for subivisions and downbeats
   public void playMeasure(Measure measure) {
+    int microsecondsPerBeat = measure.getTempo().getMSPB();
+    int millisecondsPerBeat = microsecondsPerBeat / this.conversion;
+    int beats = measure.getTimeSignature().getBeats();
     try {
-      this.downbeatClip.start();
-      Thread.sleep(1000);
-      this.beatClip.start();
-      Thread.sleep(1000);
-      this.subdivClip.start();
+      long duration = 0;
+      long adjust = 0;
+      for (int i = 0; i < beats; i++) {
+        long startTime = System.currentTimeMillis();
+        if (i == 0 && measure.playDownbeat()) {
+          this.downbeatClip.start();
+          Thread.sleep(millisecondsPerBeat - adjust);
+          this.downbeatClip.stop();
+          this.downbeatClip.setFramePosition(0);
+        }
+        else {
+          this.beatClip.start();
+          Thread.sleep(millisecondsPerBeat - adjust);
+          this.beatClip.stop();
+          this.beatClip.setFramePosition(0);
+        }
+        duration = (System.currentTimeMillis() - startTime);
+        adjust = duration - millisecondsPerBeat;
+      }
     }
     catch (Exception e) {
       e.printStackTrace();

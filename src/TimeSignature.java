@@ -11,5 +11,13 @@ public class TimeSignature {
     this.beats = 4;
     this.division = 4;
   }
-  
+
+  public int getBeats() {
+    return this.beats;
+  }
+
+  public int getDivision() {
+    return this.division;
+  }
+
 }
