@@ -1,6 +1,6 @@
 public class Driver {
   public static void main(String[] args) {
-    MetronomeApp m = new MetronomeApp();
-    
+    SimpleGraphics g = new SimpleGraphics();
+    g.run();
   }
 }

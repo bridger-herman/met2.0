@@ -2,16 +2,16 @@ import java.util.ArrayList;
 
 public class Program {
   private ArrayList measureList;
-  private int iterator;
+  private int currentIndex;
 
   public Program() {
     this.measureList = new ArrayList();
-    this.iterator = 0;
+    this.currentIndex = 0;
   }
 
   public Measure getNextMeasure() {
-    Measure tmp = (Measure) this.measureList.get(this.iterator);
-    this.iterator++;
+    Measure tmp = (Measure) this.measureList.get(this.currentIndex);
+    this.currentIndex++;
     return tmp;
   }
 
