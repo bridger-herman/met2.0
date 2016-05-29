@@ -20,4 +20,7 @@ public class TimeSignature {
     return this.division;
   }
 
+  public String toString() {
+    return Integer.toString(this.beats) + "/" + Integer.toString(this.division);
+  }
 }

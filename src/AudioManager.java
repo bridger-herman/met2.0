@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.sound.sampled.*;
 import java.io.File;
-import java.util.Timer;
 
 public class AudioManager {
   private static final String location = "../sounds/";
@@ -13,18 +12,20 @@ public class AudioManager {
 
   private static AudioClip downbeat = new AudioClip(downbeatPath);
   private static AudioClip beat = new AudioClip(beatPath);
-  private static Timer timer = new Timer();
 
-  // TODO add support for subivisions
+  // TODO add support for subdivisions
   public static void playProgram(Program program) {
     Measure currentMeasure = program.getNextMeasure();
     while (currentMeasure != null) {
+      int beats = currentMeasure.getTimeSignature().getBeats();
+      int subdivisions = currentMeasure.getSubdivision().getNum();
       int microsecondsPerBeat = currentMeasure.getTempo().getMSPB();
       int millisecondsPerBeat = microsecondsPerBeat / conversion;
-      int beats = currentMeasure.getTimeSignature().getBeats();
+      int millisecondsPerSubdivision =
+        microsecondsPerBeat / conversion / subdivisions;
       long adjust;
       for (int i = 0; i < beats; i++) {
-        if (i == 0 && currentMeasure.playDownbeat())
+        if (i == 0 && Player.playDownbeats)
           adjust = downbeat.play();
         else
           adjust = beat.play();

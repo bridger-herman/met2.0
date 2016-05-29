@@ -2,18 +2,42 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class MediaControl extends JPanel implements ActionListener {
+public class MediaControl extends JPanel implements ActionListener, ItemListener {
   private static final String stopText = "Stop";
   private static final String playText = "Play";
+  private static final String downbeatLabel = "Play Downbeats";
+  private static final String subdivisionLabel = "Play Subdivisions";
+
   private JButton playButton;
+  private JButton showButton;
+  private JCheckBox playDownbeatsBox;
+  private JCheckBox playSubdivisionsBox;
+
   private boolean playing;
 
   public MediaControl() {
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+    playDownbeatsBox = new JCheckBox(downbeatLabel, Player.playDownbeats);
+    playDownbeatsBox.addItemListener(this);
+    playDownbeatsBox.setActionCommand(downbeatLabel);
+    add(playDownbeatsBox);
+
+    playSubdivisionsBox = new JCheckBox(subdivisionLabel, Player.playSubdivisions);
+    playSubdivisionsBox.addItemListener(this);
+    playSubdivisionsBox.setActionCommand(subdivisionLabel);
+    add(playSubdivisionsBox);
+
     playing = false;
     playButton = new JButton(playText);
     playButton.setActionCommand(playText);
     playButton.addActionListener(this);
     add(playButton);
+
+    showButton = new JButton("Show Program");
+    showButton.setActionCommand("Show");
+    showButton.addActionListener(this);
+    add(showButton);
   }
 
   private void togglePlayState() {
@@ -34,7 +58,7 @@ public class MediaControl extends JPanel implements ActionListener {
         togglePlayState();
         break;
       case playText:
-      togglePlayState();
+        togglePlayState();
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             Player.playCurrentProgram();
@@ -42,13 +66,19 @@ public class MediaControl extends JPanel implements ActionListener {
           }
         });
         break;
+      case "Show":
+        Player.showProgram();
+        break;
       default:
         break;
     }
   }
 
-  public boolean isPlaying() {
-    return playing;
+  public void itemStateChanged(ItemEvent e) {
+    Object source = e.getItemSelectable();
+    if (source == playDownbeatsBox)
+      Player.playDownbeats = e.getStateChange() != ItemEvent.DESELECTED;
+    else if (source == playSubdivisionsBox)
+      Player.playSubdivisions = e.getStateChange() != ItemEvent.DESELECTED;
   }
-
 }

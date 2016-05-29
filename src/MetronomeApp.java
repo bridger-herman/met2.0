@@ -2,14 +2,18 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class SimpleGraphics extends JFrame {
+public class MetronomeApp extends JFrame {
   private static final String title = "Met2.0 Simple Mode";
   private MediaControl mediaControls;
   private MeasureControl measureControls;
+  // TODO make fancy program Display
+  // TODO improve GUI
 
+  public MetronomeApp() {
+    // TODO eventually put parameters for size and such here
+  }
 
   private void createGUI() {
-    //Create and set up the window.
     this.setTitle(title);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -18,17 +22,15 @@ public class SimpleGraphics extends JFrame {
 
     this.mediaControls = new MediaControl();
     this.mediaControls.setOpaque(true);
-    // this.add(this.mediaControls, BorderLayout.CENTER);
 
     this.measureControls = new MeasureControl();
     this.measureControls.setOpaque(true);
-    // this.add(this.measureControls, BorderLayout.CENTER);
 
-    container.add(this.mediaControls);
-    container.add(this.measureControls);
+    container.add(this.mediaControls, BorderLayout.CENTER);
+    container.add(this.measureControls, BorderLayout.CENTER);
 
     this.add(container);
-    //Display the window.
+    
     this.pack();
     this.setVisible(true);
   }
@@ -39,5 +41,10 @@ public class SimpleGraphics extends JFrame {
         createGUI();
       }
     });
+  }
+
+  public static void main(String[] args) {
+    MetronomeApp met = new MetronomeApp();
+    met.run();
   }
 }

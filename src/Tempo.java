@@ -14,6 +14,7 @@ public class Tempo {
   }
 
   private int bpmToMSPB() {
+    // Conversion from beats per minute to microseconds per beat
     return (int) ((1.0 / bpm) * this.conversion);
   }
 
@@ -23,5 +24,9 @@ public class Tempo {
 
   public int getMSPB() {
     return this.mspb;
+  }
+
+  public String toString() {
+    return Integer.toString(this.bpm);
   }
 }

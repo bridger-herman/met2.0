@@ -16,7 +16,6 @@ public class AudioClip {
   private void setup() {
     try {
       this.inputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-
       AudioFormat format = this.inputStream.getFormat();
       DataLine.Info info = new DataLine.Info(Clip.class, format);
       this.clip = (Clip) AudioSystem.getLine(info);

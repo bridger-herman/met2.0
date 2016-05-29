@@ -1,10 +1,19 @@
 public class Subdivision {
-  private int type;
+  private int num;
 
-  public Subdivision(int type) {
-    this.type = type;
+  public Subdivision(int num) {
+    this.num = num;
   }
+
   public Subdivision() {
-    this.type = 4;
+    this.num = 1;
+  }
+
+  public int getNum() {
+    return this.num;
+  }
+
+  public String toString() {
+    return Integer.toString(this.num);
   }
 }
