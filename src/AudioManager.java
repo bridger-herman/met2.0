@@ -14,6 +14,8 @@ public class AudioManager {
   private static AudioClip beat = new AudioClip(beatPath);
   private static AudioClip subdivision = new AudioClip(subdivPath);
 
+  // TODO rework this to use threading, and to update the display for each
+  // measure it plays.
   public static void playProgram(Program program) {
     Measure currentMeasure = program.getNextMeasure();
     while (currentMeasure != null) {

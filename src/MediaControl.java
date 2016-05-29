@@ -22,26 +22,31 @@ public class MediaControl extends JPanel implements ActionListener, ItemListener
 
     playDownbeatsBox = new JCheckBox(downbeatLabel, Player.playDownbeats);
     playDownbeatsBox.addItemListener(this);
-    add(playDownbeatsBox);
+    playDownbeatsBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+    this.add(playDownbeatsBox);
 
     playSubdivisionsBox = new JCheckBox(subdivisionLabel, Player.playSubdivisions);
     playSubdivisionsBox.addItemListener(this);
-    add(playSubdivisionsBox);
+    playSubdivisionsBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+    this.add(playSubdivisionsBox);
 
     loopPlayback = new JCheckBox(loopLabel, Player.getProgramLoop());
     loopPlayback.addItemListener(this);
-    add(loopPlayback);
+    loopPlayback.setAlignmentX(Component.CENTER_ALIGNMENT);
+    this.add(loopPlayback);
 
     playing = false;
     playButton = new JButton(playText);
     playButton.setActionCommand(playText);
     playButton.addActionListener(this);
-    add(playButton);
+    playButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    this.add(playButton);
 
     showButton = new JButton("Show Program");
     showButton.setActionCommand("Show");
     showButton.addActionListener(this);
-    add(showButton);
+    showButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    this.add(showButton);
   }
 
   private void togglePlayState() {

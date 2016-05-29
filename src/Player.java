@@ -1,9 +1,11 @@
+import javax.swing.DefaultListModel;
 
 public class Player {
   private static String mode = "simple";
   public static boolean playDownbeats = true;
   public static boolean playSubdivisions = false;
   private static Program currentProgram = new Program();
+  private static Measure[] displayArray = new Measure[0];
 
   public static void playCurrentProgram() {
     currentProgram.restart();
@@ -24,6 +26,10 @@ public class Player {
 
   public static boolean getProgramLoop() {
     return currentProgram.getLoop();
+  }
+
+  public static DefaultListModel<Measure> getDisplayList() {
+    return currentProgram.getList();
   }
 
   public static void showProgram() {

@@ -4,8 +4,6 @@ import javax.swing.*;
 
 public class MetronomeApp extends JFrame {
   private static final String title = "Met2.0 Simple Mode";
-  private MediaControl mediaControls;
-  private MeasureControl measureControls;
   // TODO make fancy program Display
   // TODO improve GUI
 
@@ -18,19 +16,30 @@ public class MetronomeApp extends JFrame {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     JPanel container = new JPanel();
-    container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+    container.setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
 
-    this.mediaControls = new MediaControl();
-    this.mediaControls.setOpaque(true);
+    c.gridx = 0;
+    c.gridy = 0;
+    MediaControl mediaControls = new MediaControl();
+    mediaControls.setOpaque(true);
+    container.add(mediaControls, c);
 
-    this.measureControls = new MeasureControl();
-    this.measureControls.setOpaque(true);
+    c.gridx = 1;
+    MeasureControl measureControls = new MeasureControl();
+    measureControls.setOpaque(true);
+    container.add(measureControls, c);
 
-    container.add(this.mediaControls, BorderLayout.CENTER);
-    container.add(this.measureControls, BorderLayout.CENTER);
+    c.gridx = 0;
+    c.gridy = 1;
+    c.gridwidth = 2;
+    ProgramControl programControls = new ProgramControl();
+    programControls.setOpaque(true);
+    container.add(programControls, c);
 
     this.add(container);
-    
+
     this.pack();
     this.setVisible(true);
   }

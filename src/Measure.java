@@ -29,9 +29,10 @@ public class Measure {
   }
 
   public String toString() {
-    String add = this.timeSignature.toString() + ",";
+    String add = this.timeSignature.toString() + "@";
     add += this.tempo.toString() + ",";
     add += this.subdivision.toString();
     return add;
   }
+
 }

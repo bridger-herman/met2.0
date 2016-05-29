@@ -1,19 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.DefaultListModel;
 
 public class Program {
-  private List<Measure> measureList;
+  private DefaultListModel<Measure> measureList;
   private int currentIndex;
   private boolean loop;
 
   public Program() {
-    this.measureList = new ArrayList<Measure>();
+    this.measureList = new DefaultListModel<Measure>();
     this.currentIndex = 0;
     this.loop = false;
   }
 
   public Program(boolean loop) {
-    this.measureList = new ArrayList<Measure>();
+    this.measureList = new DefaultListModel<Measure>();
     this.currentIndex = 0;
     this.loop = loop;
   }
@@ -37,15 +36,19 @@ public class Program {
   }
 
   public void addMeasure(Measure measure) {
-    this.measureList.add(measure);
+    this.measureList.addElement(measure);
   }
 
   public void removeMeasure(Measure measure) {
-    this.measureList.remove(measure);
+    this.measureList.removeElement(measure);
   }
 
   public void restart() {
     this.currentIndex = 0;
+  }
+
+  public DefaultListModel<Measure> getList() {
+    return this.measureList;
   }
 
   // FORMAT: just save measures with their toString
@@ -72,8 +75,8 @@ public class Program {
 
   public String toString() {
     String add = "";
-    for (Measure measure : this.measureList) {
-      add += measure.toString() + "\n";
+    for (int i = 0; i < this.measureList.getSize(); i++) {
+      add += this.measureList.get(i).toString() + "\n";
     }
     return add;
   }
