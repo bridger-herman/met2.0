@@ -25,9 +25,11 @@ public class Program {
       return tmp;
     }
     catch (IndexOutOfBoundsException e) {
-      if (this.loop) {
+      if (this.loop && this.measureList.size() > 0) {
         this.restart();
-        return (Measure) this.measureList.get(this.currentIndex);
+        Measure tmp = (Measure) this.measureList.get(this.currentIndex);
+        this.currentIndex++;
+        return tmp;
       }
       else
         return null;
@@ -60,6 +62,14 @@ public class Program {
     // store to file
   }
 
+  public void setLoop(boolean loop) {
+    this.loop = loop;
+  }
+
+  public boolean getLoop() {
+    return this.loop;
+  }
+
   public String toString() {
     String add = "";
     for (Measure measure : this.measureList) {
@@ -67,5 +77,4 @@ public class Program {
     }
     return add;
   }
-
 }

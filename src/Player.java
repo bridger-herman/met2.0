@@ -18,6 +18,14 @@ public class Player {
     currentProgram.removeMeasure(measure);
   }
 
+  public static void setProgramLoop(boolean loop) {
+    currentProgram.setLoop(loop);
+  }
+
+  public static boolean getProgramLoop() {
+    return currentProgram.getLoop();
+  }
+
   public static void showProgram() {
     System.out.println(currentProgram);
   }

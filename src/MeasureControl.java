@@ -9,6 +9,7 @@ public class MeasureControl extends JPanel implements ActionListener {
   private JComboBox<Integer> division;
   private JSpinner subdivision;
   private JSpinner tempo;
+  private double previousDivision;
 
   public MeasureControl() {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -26,13 +27,14 @@ public class MeasureControl extends JPanel implements ActionListener {
     division = new JComboBox<Integer>(options);
     division.addActionListener(this);
     division.setSelectedIndex(2);
+    previousDivision = 4.0;
     divisionPanel.add(divisionLabel);
     divisionPanel.add(division);
     add(divisionPanel);
 
     JPanel subdivPanel = new JPanel();
     JLabel subdivLabel = new JLabel("Subdivision:");
-    subdivision = new JSpinner(new SpinnerNumberModel(1, 1, 8, 1));
+    subdivision = new JSpinner(new SpinnerNumberModel(0, 0, 8, 1));
     subdivPanel.add(subdivLabel);
     subdivPanel.add(subdivision);
     add(subdivPanel);
@@ -60,7 +62,9 @@ public class MeasureControl extends JPanel implements ActionListener {
     }
     else {
       try {
-        double multiplier = ((int) division.getSelectedItem()) / 4.0;
+        int selected = (int) division.getSelectedItem();
+        double multiplier = selected / previousDivision;
+        previousDivision = (double) selected;
         int newTempo = (int) (((int) tempo.getValue()) * multiplier);
         tempo.setValue(newTempo);
       }

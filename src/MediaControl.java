@@ -7,11 +7,13 @@ public class MediaControl extends JPanel implements ActionListener, ItemListener
   private static final String playText = "Play";
   private static final String downbeatLabel = "Play Downbeats";
   private static final String subdivisionLabel = "Play Subdivisions";
+  private static final String loopLabel = "Loop Playback";
 
   private JButton playButton;
   private JButton showButton;
   private JCheckBox playDownbeatsBox;
   private JCheckBox playSubdivisionsBox;
+  private JCheckBox loopPlayback;
 
   private boolean playing;
 
@@ -20,13 +22,15 @@ public class MediaControl extends JPanel implements ActionListener, ItemListener
 
     playDownbeatsBox = new JCheckBox(downbeatLabel, Player.playDownbeats);
     playDownbeatsBox.addItemListener(this);
-    playDownbeatsBox.setActionCommand(downbeatLabel);
     add(playDownbeatsBox);
 
     playSubdivisionsBox = new JCheckBox(subdivisionLabel, Player.playSubdivisions);
     playSubdivisionsBox.addItemListener(this);
-    playSubdivisionsBox.setActionCommand(subdivisionLabel);
     add(playSubdivisionsBox);
+
+    loopPlayback = new JCheckBox(loopLabel, Player.getProgramLoop());
+    loopPlayback.addItemListener(this);
+    add(loopPlayback);
 
     playing = false;
     playButton = new JButton(playText);
@@ -80,5 +84,7 @@ public class MediaControl extends JPanel implements ActionListener, ItemListener
       Player.playDownbeats = e.getStateChange() != ItemEvent.DESELECTED;
     else if (source == playSubdivisionsBox)
       Player.playSubdivisions = e.getStateChange() != ItemEvent.DESELECTED;
+    else if (source == loopPlayback)
+      Player.setProgramLoop(e.getStateChange() != ItemEvent.DESELECTED);
   }
 }
