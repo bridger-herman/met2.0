@@ -1,15 +1,21 @@
+import javax.swing.JList;
 import javax.swing.DefaultListModel;
 
 public class Player {
-  private static String mode = "simple";
   public static boolean playDownbeats = true;
   public static boolean playSubdivisions = false;
   private static Program currentProgram = new Program();
-  private static Measure[] displayArray = new Measure[0];
+  private static Measure currentMeasure = null;
 
   public static void playCurrentProgram() {
     currentProgram.restart();
-    AudioManager.playProgram(currentProgram);
+    currentMeasure = currentProgram.getNextMeasure();
+    while (currentMeasure != null) {
+      // TODO this is REALLY bad design, fix ASAP
+      updateSelection(ProgramControl.getDisplayList());
+      AudioManager.playMeasure(currentMeasure);
+      currentMeasure = currentProgram.getNextMeasure();
+    }
   }
 
   public static void addMeasureToProgram(Measure measure) {
@@ -28,8 +34,12 @@ public class Player {
     return currentProgram.getLoop();
   }
 
-  public static DefaultListModel<Measure> getDisplayList() {
+  public static DefaultListModel<Measure> getMeasureList() {
     return currentProgram.getList();
+  }
+
+  public static void updateSelection(JList<Measure> displayList) {
+    displayList.setSelectedValue(currentMeasure, true);
   }
 
   public static void showProgram() {

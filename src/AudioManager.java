@@ -16,40 +16,36 @@ public class AudioManager {
 
   // TODO rework this to use threading, and to update the display for each
   // measure it plays.
-  public static void playProgram(Program program) {
-    Measure currentMeasure = program.getNextMeasure();
-    while (currentMeasure != null) {
-      int beats = currentMeasure.getTimeSignature().getBeats();
-      int subdivisions = currentMeasure.getSubdivision().getNum();
-      int microsecondsPerBeat = currentMeasure.getTempo().getMSPB();
-      int millisecondsPerBeat = microsecondsPerBeat / conversion;
-      int millisecondsPerSubdivision =
-        microsecondsPerBeat / conversion / (subdivisions + 1);
-      long adjust = 0;
-      for (int b = 0; b < beats; b++) {
-        if (b == 0 && Player.playDownbeats)
-          adjust = downbeat.play();
-        else
-          adjust = beat.play();
-        long subdivAdjust = 0;
-        try {
-          if (Player.playSubdivisions) {
-            Thread.sleep(millisecondsPerSubdivision - adjust);
-            for (int s = 0; s < subdivisions; s++) {
-              subdivAdjust = subdivision.play();
-              Thread.sleep(millisecondsPerSubdivision - subdivAdjust);
-            }
-            adjust += subdivAdjust;
+  public static void playMeasure(Measure currentMeasure) {
+    int beats = currentMeasure.getTimeSignature().getBeats();
+    int subdivisions = currentMeasure.getSubdivision().getNum();
+    int microsecondsPerBeat = currentMeasure.getTempo().getMSPB();
+    int millisecondsPerBeat = microsecondsPerBeat / conversion;
+    int millisecondsPerSubdivision =
+      microsecondsPerBeat / conversion / (subdivisions + 1);
+    long adjust = 0;
+    for (int b = 0; b < beats; b++) {
+      if (b == 0 && Player.playDownbeats)
+        adjust = downbeat.play();
+      else
+        adjust = beat.play();
+      long subdivAdjust = 0;
+      try {
+        if (Player.playSubdivisions) {
+          Thread.sleep(millisecondsPerSubdivision - adjust);
+          for (int s = 0; s < subdivisions; s++) {
+            subdivAdjust = subdivision.play();
+            Thread.sleep(millisecondsPerSubdivision - subdivAdjust);
           }
-          else {
-            Thread.sleep(millisecondsPerBeat - adjust);
-          }
+          adjust += subdivAdjust;
         }
-        catch (Exception e) {
-          System.out.println("An error occured in audio playback");
+        else {
+          Thread.sleep(millisecondsPerBeat - adjust);
         }
       }
-      currentMeasure = program.getNextMeasure();
+      catch (Exception e) {
+        System.out.println("An error occured in audio playback");
+      }
     }
   }
 }

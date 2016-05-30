@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class MetronomeApp extends JFrame {
-  private static final String title = "Met2.0 Simple Mode";
+  private static final String title = "Metronome 2.0";
   // TODO make fancy program Display
   // TODO improve GUI
 

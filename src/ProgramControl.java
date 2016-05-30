@@ -1,25 +1,24 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 public class ProgramControl extends JPanel implements ActionListener {
   private static final String editLabel = "Edit Measure";
   private static final String addLabel = "Add Measure";
-  JButton editButton;
-  JButton addButton;
-  JScrollPane pane;
-  JList<Measure> displayList;
+  private JButton editButton;
+  private JButton addButton;
+  private JScrollPane pane;
+  private static JList<Measure> displayList;
 
   public ProgramControl() {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    displayList = new JList<Measure>(Player.getDisplayList());
+    displayList = new JList<Measure>(Player.getMeasureList());
     displayList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+    displayList.setCellRenderer(new MeasureRenderer());
     displayList.setVisibleRowCount(1);
-    // displayList.setBorder(new EmptyBorder(10,10, 10, 10));
 
     pane = new JScrollPane(displayList);
-    pane.setPreferredSize(new Dimension(400, 50));
+    pane.setPreferredSize(new Dimension(400, 65));
     pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
@@ -50,5 +49,9 @@ public class ProgramControl extends JPanel implements ActionListener {
       default:
         break;
     }
+  }
+
+  public static JList<Measure> getDisplayList() {
+    return displayList;
   }
 }
