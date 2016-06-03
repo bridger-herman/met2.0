@@ -10,7 +10,11 @@ public abstract class SwingGFXApp extends JFrame {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
-  private static JPanel componentWithLabel(Component c, String label, int labelAlign) {
+  protected static JPanel componentWithLabel(Component c, String label) {
+    return componentWithLabel(c, label, LABEL_ON_LEFT);
+  }
+
+  protected static JPanel componentWithLabel(Component c, String label, int labelAlign) {
     JPanel tmpPanel = new JPanel();
     if (labelAlign == LABEL_ON_LEFT) {
       tmpPanel.add(new JLabel(label));
@@ -35,6 +39,12 @@ public abstract class SwingGFXApp extends JFrame {
     b.setActionCommand(actionCommand);
     b.addActionListener(listener);
     b.setAlignmentX(Component.CENTER_ALIGNMENT);
+    return b;
+  }
+
+  protected static JComboBox setupJComboBox(JComboBox b, ActionListener listener, int selectedIndex) {
+    b.addActionListener(listener);
+    b.setSelectedIndex(selectedIndex);
     return b;
   }
 

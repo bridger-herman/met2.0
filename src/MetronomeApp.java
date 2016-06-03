@@ -23,8 +23,23 @@ public class MetronomeApp extends SwingGFXApp {
   private static final String mediaStopButtonLabel = "Stop Program";
   private static final String mediaShowProgramLabel = "Show Program";
 
+  // Components for the measure control panel
+  private JPanel measureControlPanel;
+  private JButton measureAddMeasureButton;
+  private JSpinner measureBeatsSpinner;
+  private JComboBox<Integer> measureDivisionComboBox;
+  private JSpinner measureSubdivisionSpinner;
+  private JSpinner measureTempoSpinner;
+  private JSpinner measureNumMeasuresSpinner;
+  private double measurePreviousDivision;
+  private static final String measureAddMeasureLabel = "Add Measure";
+  private static final String measureBeatsLabel = "Beats:";
+  private static final String measureDivisionLabel = "Division:";
+  private static final String measureSubdivisionLabel = "Subdivision:";
+  private static final String measureTempoLabel = "Tempo:";
+  private static final String measureNumMeasuresLabel = "Measures to add:";
+
   private Player player;
-  private boolean playing; // TODO make this a part of the "Player" class
 
   public MetronomeApp() {
     player = new Player();
@@ -38,10 +53,11 @@ public class MetronomeApp extends SwingGFXApp {
   }
 
   private void initMediaControls() {
+    // TODO make more verbose media controls
     mediaControlPanel = new JPanel();
+    mediaControlPanel.setLayout(new BoxLayout(mediaControlPanel, BoxLayout.Y_AXIS));
     frameContainerConstraints.gridx = 0;
     frameContainerConstraints.gridy = 0;
-    mediaControlPanel.setLayout(new BoxLayout(mediaControlPanel, BoxLayout.Y_AXIS));
 
     ItemListener mediaBoxListener = new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -55,15 +71,15 @@ public class MetronomeApp extends SwingGFXApp {
       }
     };
 
-    mediaPlayDownbeatsBox = SwingGFXApp.setupJCheckBox(
+    mediaPlayDownbeatsBox = setupJCheckBox(
       new JCheckBox(mediaPlayDownbeatsLabel, player.hasAudibleDownbeats()), mediaBoxListener);
     mediaControlPanel.add(mediaPlayDownbeatsBox);
 
-    mediaPlaySubdivisionsBox = SwingGFXApp.setupJCheckBox(
+    mediaPlaySubdivisionsBox = setupJCheckBox(
       new JCheckBox(mediaPlaySubdivisionsLabel, player.hasAudibleSubdivisions()), mediaBoxListener);
     mediaControlPanel.add(mediaPlaySubdivisionsBox);
 
-    mediaLoopPlaybackBox = SwingGFXApp.setupJCheckBox(
+    mediaLoopPlaybackBox = setupJCheckBox(
     new JCheckBox(mediaLoopPlaybackLabel, player.hasLoopPlayback()), mediaBoxListener);
     mediaControlPanel.add(mediaLoopPlaybackBox);
 
@@ -84,11 +100,11 @@ public class MetronomeApp extends SwingGFXApp {
       }
     };
 
-    mediaPlayButton = SwingGFXApp.setupJButton(
+    mediaPlayButton = setupJButton(
       new JButton(mediaPlayButtonLabel), mediaPlayButtonLabel, mediaButtonListener);
     mediaControlPanel.add(mediaPlayButton);
 
-    mediaShowProgramButton = SwingGFXApp.setupJButton(
+    mediaShowProgramButton = setupJButton(
       new JButton(mediaShowProgramLabel), mediaShowProgramLabel, mediaButtonListener);
     mediaControlPanel.add(mediaShowProgramButton);
 
@@ -108,12 +124,79 @@ public class MetronomeApp extends SwingGFXApp {
     player.togglePlaying();
   }
 
+  private void initMeasureControls() {
+    measureControlPanel = new JPanel();
+    measureControlPanel.setLayout(new BoxLayout(measureControlPanel, BoxLayout.Y_AXIS));
+    frameContainerConstraints.gridx = 1;
+    frameContainerConstraints.gridy = 0;
+
+    measureBeatsSpinner = new JSpinner(new SpinnerNumberModel(4, 1, 64, 1));
+    JPanel beatsPanel = componentWithLabel(measureBeatsSpinner, measureBeatsLabel);
+    beatsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(beatsPanel);
+
+    ActionListener measureListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals(measureAddMeasureLabel)) {
+            player.addMeasureToProgram(new Measure(
+            new TimeSignature((int) measureBeatsSpinner.getValue(), (int) measureDivisionComboBox.getSelectedItem()),
+            new Tempo((int) measureTempoSpinner.getValue()),
+            new Subdivision((int) measureSubdivisionSpinner.getValue())));
+        }
+        else {
+          try {
+            int selected = (int) measureDivisionComboBox.getSelectedItem();
+            double multiplier = selected / measurePreviousDivision;
+            measurePreviousDivision = (double) selected;
+            int newTempo = (int) (((int) measureTempoSpinner.getValue()) * multiplier);
+            measureTempoSpinner.setValue(newTempo);
+          }
+          catch (NullPointerException ex) {
+            // ex.printStackTrace();
+            return;
+          }
+        }
+      }
+    };
+
+    measureDivisionComboBox = setupJComboBox(
+      new JComboBox<Integer>(new Integer[] {1, 2, 4, 8, 16, 32, 64}), measureListener, 2);
+    JPanel divisionPanel = componentWithLabel(measureDivisionComboBox, measureDivisionLabel);
+    measurePreviousDivision = 4.0;
+    divisionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(divisionPanel);
+
+    JPanel subdivPanel = new JPanel();
+    measureSubdivisionSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 8, 1));
+    JPanel subdivisionPanel = componentWithLabel(measureSubdivisionSpinner, measureSubdivisionLabel);
+    subdivisionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(subdivisionPanel);
+
+    measureTempoSpinner = new JSpinner(new SpinnerNumberModel(120, 1, 300, 1));
+    JPanel tempoPanel = componentWithLabel(measureTempoSpinner, measureTempoLabel);
+    tempoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(tempoPanel);
+
+
+    measureNumMeasuresSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 512, 1));
+    JPanel howManyMeasuresPanel = componentWithLabel(measureNumMeasuresSpinner, measureNumMeasuresLabel);
+    howManyMeasuresPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(howManyMeasuresPanel);
+
+    measureAddMeasureButton= new JButton(measureAddMeasureLabel);
+    measureAddMeasureButton = setupJButton(measureAddMeasureButton, measureAddMeasureLabel, measureListener);
+    measureAddMeasureButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    measureControlPanel.add(measureAddMeasureButton);
+
+    measureControlPanel.setOpaque(true);
+    frameContainer.add(measureControlPanel, frameContainerConstraints);
+  }
 
   protected void createGUI() {
     this.setTitle(title);
-    playing = false;
     initContainer();
     initMediaControls();
+    initMeasureControls();
 
     // frameContainerConstraints.gridx = 0;
     // frameContainerConstraints.gridy = 0;
