@@ -39,6 +39,15 @@ public class MetronomeApp extends SwingGFXApp {
   private static final String measureTempoLabel = "Tempo:";
   private static final String measureNumMeasuresLabel = "Measures to add:";
 
+  // Components for the program control panel
+  private JPanel programControlPanel;
+  private JButton programEditButton;
+  private JButton programAddButton;
+  private JScrollPane programScrollPane;
+  private static JList<Measure> programMeasureList;
+  private static final String programEditLabel = "Edit Measure";
+  private static final String programAddLabel = "Add Measure";
+
   private Player player;
 
   public MetronomeApp() {
@@ -53,11 +62,13 @@ public class MetronomeApp extends SwingGFXApp {
   }
 
   private void initMediaControls() {
+    frameContainerConstraints.gridx = 0;
+    frameContainerConstraints.gridy = 0;
+    frameContainerConstraints.gridwidth = 1;
+
     // TODO make more verbose media controls
     mediaControlPanel = new JPanel();
     mediaControlPanel.setLayout(new BoxLayout(mediaControlPanel, BoxLayout.Y_AXIS));
-    frameContainerConstraints.gridx = 0;
-    frameContainerConstraints.gridy = 0;
 
     ItemListener mediaBoxListener = new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -125,10 +136,12 @@ public class MetronomeApp extends SwingGFXApp {
   }
 
   private void initMeasureControls() {
-    measureControlPanel = new JPanel();
-    measureControlPanel.setLayout(new BoxLayout(measureControlPanel, BoxLayout.Y_AXIS));
     frameContainerConstraints.gridx = 1;
     frameContainerConstraints.gridy = 0;
+    frameContainerConstraints.gridwidth = 1;
+
+    measureControlPanel = new JPanel();
+    measureControlPanel.setLayout(new BoxLayout(measureControlPanel, BoxLayout.Y_AXIS));
 
     measureBeatsSpinner = new JSpinner(new SpinnerNumberModel(4, 1, 64, 1));
     JPanel beatsPanel = componentWithLabel(measureBeatsSpinner, measureBeatsLabel);
@@ -177,7 +190,6 @@ public class MetronomeApp extends SwingGFXApp {
     tempoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     measureControlPanel.add(tempoPanel);
 
-
     measureNumMeasuresSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 512, 1));
     JPanel howManyMeasuresPanel = componentWithLabel(measureNumMeasuresSpinner, measureNumMeasuresLabel);
     howManyMeasuresPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -192,11 +204,60 @@ public class MetronomeApp extends SwingGFXApp {
     frameContainer.add(measureControlPanel, frameContainerConstraints);
   }
 
+  private void initProgramControls() {
+    frameContainerConstraints.gridx = 0;
+    frameContainerConstraints.gridy = 1;
+    frameContainerConstraints.gridwidth = 2;
+
+    programControlPanel = new JPanel();
+    programControlPanel.setLayout(new BoxLayout(programControlPanel, BoxLayout.Y_AXIS));
+
+    programMeasureList = new JList<Measure>(player.getMeasureList());
+    programMeasureList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+    programMeasureList.setCellRenderer(new MeasureRenderer());
+    programMeasureList.setVisibleRowCount(1);
+
+    programScrollPane = new JScrollPane(programMeasureList);
+    programScrollPane.setPreferredSize(new Dimension(400, 65)); // TODO avoid magic numbers
+    programScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    programScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
+    ActionListener programListener = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+          case programEditLabel:
+            System.out.println("Edit!");
+            break;
+          case programAddLabel:
+            System.out.println("Add!");
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    JPanel actionPanel = new JPanel();
+
+    programEditButton = setupJButton(new JButton(programEditLabel), programEditLabel, programListener);
+    actionPanel.add(programEditButton);
+
+    programAddButton = setupJButton(new JButton(programAddLabel), programAddLabel, programListener);
+    actionPanel.add(programAddButton);
+
+    programControlPanel.add(programScrollPane);
+    programControlPanel.add(actionPanel);
+
+    programControlPanel.setVisible(true);
+    frameContainer.add(programControlPanel, frameContainerConstraints);
+  }
+
   protected void createGUI() {
     this.setTitle(title);
     initContainer();
     initMediaControls();
     initMeasureControls();
+    initProgramControls();
 
     // frameContainerConstraints.gridx = 0;
     // frameContainerConstraints.gridy = 0;
