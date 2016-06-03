@@ -3,18 +3,10 @@ import javax.swing.DefaultListModel;
 public class Program {
   private DefaultListModel<Measure> measureList;
   private int currentIndex;
-  private boolean loop;
 
   public Program() {
     this.measureList = new DefaultListModel<Measure>();
     this.currentIndex = 0;
-    this.loop = false;
-  }
-
-  public Program(boolean loop) {
-    this.measureList = new DefaultListModel<Measure>();
-    this.currentIndex = 0;
-    this.loop = loop;
   }
 
   public Measure getNextMeasure() {
@@ -24,13 +16,6 @@ public class Program {
       return tmp;
     }
     catch (IndexOutOfBoundsException e) {
-      if (this.loop && this.measureList.size() > 0) {
-        this.restart();
-        Measure tmp = (Measure) this.measureList.get(this.currentIndex);
-        this.currentIndex++;
-        return tmp;
-      }
-      else
         return null;
     }
   }
@@ -63,14 +48,6 @@ public class Program {
   // TODO
   public void saveToFile(String fileName) {
     // store to file
-  }
-
-  public void setLoop(boolean loop) {
-    this.loop = loop;
-  }
-
-  public boolean getLoop() {
-    return this.loop;
   }
 
   public String toString() {

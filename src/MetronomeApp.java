@@ -5,7 +5,7 @@ import javax.swing.*;
 public class MetronomeApp extends SwingGFXApp {
   private static final String title = "Metronome 2.0";
 
-  // The container for all the main components
+  // Container for all the main components
   private JPanel frameContainer;
   private GridBagConstraints frameContainerConstraints;
 
@@ -23,10 +23,11 @@ public class MetronomeApp extends SwingGFXApp {
   private static final String mediaStopButtonLabel = "Stop Program";
   private static final String mediaShowProgramLabel = "Show Program";
 
-  private boolean playing;
-
+  private Player player;
+  private boolean playing; // TODO make this a part of the "Player" class
 
   public MetronomeApp() {
+    player = new Player();
   }
 
   private void initContainer() {
@@ -46,37 +47,36 @@ public class MetronomeApp extends SwingGFXApp {
       public void itemStateChanged(ItemEvent e) {
         Object source = e.getItemSelectable();
         if (source == mediaPlayDownbeatsBox)
-          Player.playDownbeats = e.getStateChange() != ItemEvent.DESELECTED;
+          player.setAudibleDownbeats(e.getStateChange() != ItemEvent.DESELECTED);
         else if (source == mediaPlaySubdivisionsBox)
-          Player.playSubdivisions = e.getStateChange() != ItemEvent.DESELECTED;
+          player.setAudibleSubdivisions(e.getStateChange() != ItemEvent.DESELECTED);
         else if (source == mediaLoopPlaybackBox)
-          Player.setProgramLoop(e.getStateChange() != ItemEvent.DESELECTED);
+          player.setLoopPlayback(e.getStateChange() != ItemEvent.DESELECTED);
       }
     };
 
     mediaPlayDownbeatsBox = SwingGFXApp.setupJCheckBox(
-      new JCheckBox(mediaPlayDownbeatsLabel, Player.playDownbeats), mediaBoxListener);
+      new JCheckBox(mediaPlayDownbeatsLabel, player.hasAudibleDownbeats()), mediaBoxListener);
     mediaControlPanel.add(mediaPlayDownbeatsBox);
 
     mediaPlaySubdivisionsBox = SwingGFXApp.setupJCheckBox(
-      new JCheckBox(mediaPlaySubdivisionsLabel, Player.playSubdivisions), mediaBoxListener);
+      new JCheckBox(mediaPlaySubdivisionsLabel, player.hasAudibleSubdivisions()), mediaBoxListener);
     mediaControlPanel.add(mediaPlaySubdivisionsBox);
 
     mediaLoopPlaybackBox = SwingGFXApp.setupJCheckBox(
-    new JCheckBox(mediaLoopPlaybackLabel, Player.getProgramLoop()), mediaBoxListener);
+    new JCheckBox(mediaLoopPlaybackLabel, player.hasLoopPlayback()), mediaBoxListener);
     mediaControlPanel.add(mediaLoopPlaybackBox);
-
 
     ActionListener mediaButtonListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
           case mediaPlayButtonLabel:
             togglePlaybackState();
-            Player.playCurrentProgram(); // TODO change this to an instance variable, move everything away from static
+            player.play();
             togglePlaybackState();
             break;
           case mediaShowProgramLabel:
-            Player.showProgram();
+            player.show();
             break;
           default:
             break;
@@ -97,7 +97,7 @@ public class MetronomeApp extends SwingGFXApp {
   }
 
   private void togglePlaybackState() {
-    if (playing) {
+    if (player.isPlaying()) {
       mediaPlayButton.setActionCommand(mediaPlayButtonLabel);
       mediaPlayButton.setText(mediaPlayButtonLabel);
     }
@@ -105,7 +105,7 @@ public class MetronomeApp extends SwingGFXApp {
       mediaPlayButton.setActionCommand(mediaStopButtonLabel);
       mediaPlayButton.setText(mediaStopButtonLabel);
     }
-    playing = !playing;
+    player.togglePlaying();
   }
 
 
@@ -121,10 +121,10 @@ public class MetronomeApp extends SwingGFXApp {
     // mediaControls.setOpaque(true);
     // frameContainer.add(mediaControls, frameContainerConstraints);
     //
-    frameContainerConstraints.gridx = 1;
-    MeasureControl measureControls = new MeasureControl();
-    measureControls.setOpaque(true);
-    frameContainer.add(measureControls, frameContainerConstraints);
+    // frameContainerConstraints.gridx = 1;
+    // MeasureControl measureControls = new MeasureControl();
+    // measureControls.setOpaque(true);
+    // frameContainer.add(measureControls, frameContainerConstraints);
     //
     // frameContainerConstraints.gridx = 0;
     // frameContainerConstraints.gridy = 1;
