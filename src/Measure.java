@@ -1,4 +1,5 @@
 public class Measure {
+  AudioManager audioManager;
   private TimeSignature timeSignature;
   private Tempo tempo;
   private Subdivision subdivision;
@@ -7,6 +8,7 @@ public class Measure {
     this.timeSignature = new TimeSignature();
     this.tempo = new Tempo();
     this.subdivision = new Subdivision();
+    this.audioManager = new AudioManager(this.timeSignature, this.tempo, this.subdivision);
   }
 
   public Measure(TimeSignature timeSignature, Tempo tempo,
@@ -14,7 +16,8 @@ public class Measure {
       this.timeSignature = timeSignature;
       this.tempo = tempo;
       this.subdivision = subdivision;
-    }
+      this.audioManager = new AudioManager(this.timeSignature, this.tempo, this.subdivision);
+  }
 
   public TimeSignature getTimeSignature() {
     return this.timeSignature;
@@ -26,6 +29,10 @@ public class Measure {
 
   public Subdivision getSubdivision() {
     return this.subdivision;
+  }
+
+  public AudioManager getAudioManager() {
+    return this.audioManager;
   }
 
   public String toString() {

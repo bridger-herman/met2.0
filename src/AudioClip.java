@@ -26,17 +26,26 @@ public class AudioClip {
     }
   }
 
-  public long play() {
-    long startTime = System.currentTimeMillis();
-    try {
-      this.clip.start();
-      Thread.sleep(this.clip.getMicrosecondLength() / this.conversion);
-      this.clip.stop();
-      this.clip.setFramePosition(0);
-    }
-    catch (Exception e) {
-      System.out.println("An error occured in audio playback");
-    }
-    return System.currentTimeMillis() - startTime;
+  public void play() {
+    // long startTime = System.currentTimeMillis();
+    // try {
+
+      // Thread.sleep(this.clip.getMicrosecondLength() / this.conversion);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        clip.start();
+      }
+    });
+    clip.stop();
+    clip.setFramePosition(0);
+    // }
+    // catch (Exception e) {
+    //   System.out.println("An error occured in audio playback");
+    // }
+    // return System.currentTimeMillis() - startTime;
+  }
+
+  public int getMillisecondLength() {
+    return (int) this.clip.getMicrosecondLength() / this.conversion;
   }
 }

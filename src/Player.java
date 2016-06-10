@@ -1,75 +1,50 @@
-import javax.swing.JList;
-import javax.swing.DefaultListModel;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class Player {
-  private boolean audibleDownbeats;
-  private boolean audibleSubdivisions;
+  private Timer programTimer;
   private boolean loopPlayback;
   private boolean isPlaying;
   private Program currentProgram;
   private Measure currentMeasure;
 
-  // Definitions for the audio files
-  private static final String location = "../sounds/";
-  private static final String downbeatPath = location + "a6.wav";
-  private static final String beatPath = location + "d6.wav";
-  private static final String subdivPath = location + "a5.wav";
-  private static AudioClip downbeat = new AudioClip(downbeatPath);
-  private static AudioClip beat = new AudioClip(beatPath);
-  private static AudioClip subdivision = new AudioClip(subdivPath);
-  // Conversion between microseconds and milliseconds
-  private static final int conversion = 1000;
-
   public Player() {
-    audibleDownbeats = true;
-    audibleSubdivisions = false;
     isPlaying = false;
     currentProgram = new Program();
     currentMeasure = null;
+    programTimer = new Timer(0, new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        currentMeasure = currentProgram.getNextMeasure();
+        if (isPlaying && currentMeasure != null) {
+          currentMeasure.getAudioManager().play();
+          programTimer.setDelay(currentMeasure.getAudioManager().getLengthMilliseconds());
+          // TODO works with print statement, doesn't work without. WHYY??
+          System.out.println(currentMeasure.getAudioManager().getLengthMilliseconds());
+        }
+        else if (currentMeasure == null) {
+          stop();
+        }
+      }
+    });
+    programTimer.setInitialDelay(0);
   }
 
   public void play() {
-    currentMeasure = currentProgram.getNextMeasure();
-    while (currentMeasure != null) {
-      // TODO this is REALLY bad design, fix ASAP
-      // updateSelection(ProgramControl.getDisplayList());
-      playMeasure(currentMeasure);
-      currentMeasure = currentProgram.getNextMeasure();
-    }
-  }
-  private void playMeasure(Measure measure) {
-    int beats = measure.getTimeSignature().getBeats();
-    int subdivisions = measure.getSubdivision().getNum();
-    int microsecondsPerBeat = measure.getTempo().getMSPB();
-    int millisecondsPerBeat = microsecondsPerBeat / conversion;
-    int millisecondsPerSubdivision =
-      microsecondsPerBeat / conversion / (subdivisions + 1);
-    long adjust = 0;
-    for (int b = 0; b < beats; b++) {
-      if (b == 0 && audibleDownbeats)
-        adjust = downbeat.play();
-      else
-        adjust = beat.play();
-      long subdivAdjust = 0;
-      try {
-        if (audibleSubdivisions) {
-          Thread.sleep(millisecondsPerSubdivision - adjust);
-          for (int s = 0; s < subdivisions; s++) {
-            Thread.sleep(millisecondsPerSubdivision - subdivAdjust);
-            subdivAdjust = subdivision.play();
-          }
-          adjust += subdivAdjust;
-        }
-        else {
-          Thread.sleep(millisecondsPerBeat - adjust);
-        }
-      }
-      catch (Exception e) {
-        System.out.println("An error occured in audio playback");
-      }
-    }
+    isPlaying = true;
+    programTimer.start();
   }
 
+  public void stop() {
+    isPlaying = false;
+    try {
+      programTimer.stop();
+      currentMeasure.getAudioManager().stop();
+    }
+    catch (NullPointerException e) {
+      // Do nothing
+    }
+    currentProgram.restart();
+  }
 
   public void addMeasureToProgram(Measure measure) {
     currentProgram.addMeasure(measure);
@@ -96,11 +71,11 @@ public class Player {
   }
 
   public void setAudibleDownbeats(boolean value) {
-    audibleDownbeats = value;
+    AudioManager.setAudibleDownbeats(value);
   }
 
   public void setAudibleSubdivisions(boolean value) {
-    audibleSubdivisions = value;
+    AudioManager.setAudibleSubdivisions(value);
   }
 
   public void togglePlaying() {
@@ -108,11 +83,11 @@ public class Player {
   }
 
   public boolean hasAudibleDownbeats() {
-    return audibleDownbeats;
+    return AudioManager.hasAudibleDownbeats();
   }
 
   public boolean hasAudibleSubdivisions() {
-    return audibleSubdivisions;
+    return AudioManager.hasAudibleSubdivisions();
   }
 
   public boolean isPlaying() {

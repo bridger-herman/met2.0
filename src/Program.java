@@ -16,7 +16,7 @@ public class Program {
       return tmp;
     }
     catch (IndexOutOfBoundsException e) {
-        return null;
+      return null;
     }
   }
 
